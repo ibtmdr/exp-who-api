@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	
+	   <http:listener-config name="exp-who-api-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${http.port}" />
+    </http:listener-config>
+    <apikit:config name="exp-who-api-config" api="exp-who-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="e27ad1ee-97fa-4e56-90f7-326fe7e08553" basePath="${who.basepath}" >
+		<http:request-connection protocol="${who.protocol}" host="${who.host}" port="${who.port}" />
+	</http:request-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="e93f5bea-14cb-4bbd-8ad4-52b1d52dd564" file="env/config-${mule.env}.yaml" />
+	<global-property doc:name="Global Property" doc:id="7c14a31e-87fc-4ebb-929e-1adae9e35a2c" name="mule.env" value="dev" />
+	<configuration doc:name="Configuration" doc:id="5cb511b6-5796-4126-8b22-460162eb4074" defaultErrorHandler-ref="globalError_Handler" />
+	<error-handler name="globalError_Handler" doc:id="448cafeb-4969-431a-944e-e7d6b03b2aef" >
+	   <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: error.description,
+	'type': error.errorType
+	
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+			<logger level="ERROR" doc:name="Logger" doc:id="252cdb25-e8ad-4836-a16c-5303427dca87" message="#[payload]"/>
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: error.description,
+	'type': error.errorType
+	
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+			<logger level="ERROR" doc:name="Logger" doc:id="4732e5d5-386e-4b1f-8e17-a642e4c92a34" message="#[payload]" />
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: error.description,
+	'type': error.errorType
+	
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+			<logger level="ERROR" doc:name="Logger" doc:id="441d2cdf-cf99-41b8-a652-d79ebd7ec8d8" message="#[payload]" />
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: error.description,
+	'type': error.errorType
+	
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[406]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+			<logger level="ERROR" doc:name="Logger" doc:id="36915aae-88f5-40ec-a2e3-19fe04ddd3eb" message="#[payload]" />
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: error.description,
+	'type': error.errorType
+	
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+			<logger level="ERROR" doc:name="Logger" doc:id="0c922943-3948-4816-8a6c-3211f571dc5e" message="#[payload]" />
+            
+</on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: error.description,
+	'type': error.errorType
+	
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[501]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+			<logger level="ERROR" doc:name="Logger" doc:id="ef6a6a09-3896-4092-8938-da591a1dd89f" message="#[payload]" />
+            
+</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="550536f3-e3f6-420b-8e4e-58c4aca7ce63" type="ANY">
+			<ee:transform doc:name="Transform Message" doc:id="ec9f2a62-7b88-4fce-8da9-d579af258d0a" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: error.description,
+	'type': error.errorType
+	
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="ERROR" doc:name="Logger" doc:id="1f2f733e-517a-4ac7-a093-fe5e3d9d5bc3" message="#[payload]" />
+		</on-error-propagate>
+        
+	
+</error-handler>
+	
+    
+	
+	
+	
+	
+</mule>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <flow name="get:\who\statistiques\(date):exp-who-api-config">
+		<flow-ref doc:name="call-prc-who-api-subFlow" doc:id="62360218-4974-4135-ba63-74d2fdc9a662" name="call-prc-who-api-subFlow"/>
+    </flow>
+	<flow name="get:\who\moyenne:exp-who-api-config">
+		<flow-ref doc:name="call-prc-who-api-subFlow" doc:id="6aa8ef17-daaf-4465-8fee-044a9aeb1a7c" name="call-prc-who-api-subFlow"/>
+    </flow>
+	<flow name="get:\who\positivcases:exp-who-api-config">
+		<flow-ref doc:name="call-prc-who-api-subFlow" doc:id="827341cb-fae0-4f3c-8fa4-e2509c588073" name="call-prc-who-api-subFlow"/>
+    </flow>
+    <flow name="get:\who\positivcases\(date):exp-who-api-config">
+		<flow-ref doc:name="call-prc-who-api-subFlow" doc:id="870293ba-91f6-4014-a02f-6b8e5c215d1e" name="call-prc-who-api-subFlow"/>
+    </flow>
+	<sub-flow name="call-prc-who-api-subFlow" doc:id="a56395b8-57cc-419d-9bdd-bb56f1427f43" >
+		<http:request method="GET" doc:name="call-prc-who-api" doc:id="5dc469fc-781a-443d-8ebe-a7db0fcd293a" config-ref="HTTP_Request_configuration" path="#[attributes.maskedRequestPath]" responseTimeout="${who.timeout}">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"client_secret" : "123",
+	"client_id" : "123"
+}]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="1d73d591-bbd3-4477-ae11-4d5196c43099" message="#[payload]"/>
+	</sub-flow>
+</mule>

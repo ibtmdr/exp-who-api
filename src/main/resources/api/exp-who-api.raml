@@ -1,0 +1,35 @@
+#%RAML 1.0
+title: exp-who-api
+
+
+uses:
+  rt: library/ressourceTypes.raml
+ 
+traits:
+  client-id-secret-required: !include exchange_modules/9f51add0-4db7-4281-ba02-a07dc471768f/client-id-enforcement/1.0.0/client-id-enforcement.raml
+  
+/who:
+  /statistiques/{date}:
+    is: [client-id-secret-required]
+    type:
+      rt.get:
+        exampleReponse1: !include examples/covid-trackings-example.raml
+
+  /moyenne:
+    is: [client-id-secret-required]
+    type:
+      rt.get:
+        exampleReponse1: { "moyenne": 6789.5678 }
+
+  /positivcases:
+    is: [client-id-secret-required]
+    type:
+      rt.get:
+        exampleReponse1: !include examples/state-data-example.raml
+  
+    /{date}:
+      is: [client-id-secret-required]
+      type:
+        rt.get:
+          exampleReponse1: !include examples/state-data-example.raml
+

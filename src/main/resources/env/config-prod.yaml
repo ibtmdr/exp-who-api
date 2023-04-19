@@ -1,0 +1,24 @@
+# Déclaration des properties par env
+# pour nous permet de suitcher entre les environnements 
+
+# listener http
+http:
+  port: "8081"
+  protocol: "HTTP"
+  host: "localhost"
+  path: "/api/*"
+  
+  
+# request http pour appler le process who API   
+who:
+  port: ""
+  protocol: "HTTP"
+  host: "prc-who-api.us-e2.cloudhub.io"
+  basepath: "/api"
+  operations:
+    statistique: "/who/statistiques/{date}" 
+    moyenne: "/who/moyenne"
+    positivcases: "/who/positivcases"
+    positivcasesdate: "/who/positivcases/{date}"
+    
+  timeout: "30000"
